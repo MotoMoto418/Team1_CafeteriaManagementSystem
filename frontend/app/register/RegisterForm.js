@@ -5,6 +5,8 @@ import Input from "../components/inputs/Input";
 import { useForm, SubmitHandler } from "react-hook-form";
 import Button from "../components/Button";
 import Link from "next/link";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export default function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
@@ -22,9 +24,34 @@ export default function RegisterForm() {
     },
   });
 
-  const onSubmit = (data) => {
+  const router = useRouter();
+
+  const onSubmit = async (data) => {
     setIsLoading(true);
-    console.log(data);
+
+    try {
+      const response = await fetch("http://localhost:5000/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        toast.success("Registration successful!");
+        router.push("/login");
+      } else {
+        console.error("Registration failed");
+        // You can handle the failed registration response here
+      }
+    } catch (error) {
+      console.error("Error during registration:", error);
+      // Handle any other errors that may occur during registration
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

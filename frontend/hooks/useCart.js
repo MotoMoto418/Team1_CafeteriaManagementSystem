@@ -5,6 +5,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import { toast } from "react-hot-toast";
 
 export const CartContext = createContext(null);
 
@@ -46,9 +47,6 @@ export const CartContextProvider = (props) => {
     getTotal();
   }, [cartProducts]);
 
-  console.log(cartTotalQty);
-  console.log(cartTotalAmount);
-
   const handleAddProduct = useCallback((product) => {
     setCartProducts((prev) => {
       let updatedCart;
@@ -59,11 +57,12 @@ export const CartContextProvider = (props) => {
         updatedCart = [product];
       }
 
+      toast.success("Product added to cart!");
       localStorage.setItem("dishDashItems", JSON.stringify(updatedCart));
 
       return updatedCart;
     });
-  }, {});
+  }, []);
 
   const handleRemoveProduct = useCallback(
     (product) => {
@@ -82,8 +81,8 @@ export const CartContextProvider = (props) => {
     (product) => {
       let updatedCart;
 
-      if (product.quantity === 15) {
-        return;
+      if (product.quantity === 99) {
+        return toast.error("Oops! Max cart capacity reached.");
       }
 
       if (cartProducts) {
@@ -133,6 +132,7 @@ export const CartContextProvider = (props) => {
   const handleClearCart = useCallback(() => {
     setCartProducts(null);
     setCartTotalQty(0);
+    toast.success("Cart has been cleared!");
     localStorage.setItem("dishDashItems", JSON.stringify(null));
   }, [cartProducts]);
 
