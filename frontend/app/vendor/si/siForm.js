@@ -130,6 +130,7 @@ const FormSI = () => {
       invoiceDate: String(invoiceDate),
       branchLocation: branchLocationToSend,
       billingAddress: billingAddressToSend,
+      shippingAddress: shippingAddressToSend,
       customerName,
       orderItems,
     };
@@ -144,7 +145,9 @@ const FormSI = () => {
         getErrorLists(response.data);
       }
     } catch (error) {
-      console.error('Error submitting data:', error);
+      // console.error('Error submitting data:', error);
+      console.log(response.data)
+      getErrorLists(response.data)
     }
   };
 
