@@ -6,9 +6,13 @@ import React from "react";
 import { MdArrowBack } from "react-icons/md";
 import Button from "../components/Button";
 import ItemContent from "./ItemContent";
+import Cookies from "js-cookie";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export default function CartClient() {
   const { cartProducts, handleClearCart, cartTotalAmount } = useCart();
+  const router = useRouter();
 
   if (!cartProducts || cartProducts.length === 0) {
     return (
@@ -24,6 +28,56 @@ export default function CartClient() {
     );
   }
 
+  const prepareOrderData = (cartProducts, user_id, cartTotalAmount) => {
+    const orderData = {
+      food_id: {},
+      user_id: String(user_id),
+      total: String(cartTotalAmount),
+      cafe_id: String(cartProducts[0].cafe_id),
+    };
+
+    cartProducts.forEach((product) => {
+      const { id, quantity } = product;
+      orderData.food_id[String(id)] = quantity;
+    });
+
+    return orderData;
+  };
+
+  const handleCheckout = async () => {
+    const packet = prepareOrderData(cartProducts, user_id, cartTotalAmount);
+
+    try {
+      const response = await fetch("http://localhost:5000/order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // Add any other headers you may need
+        },
+        // You can pass data in the body if needed
+        body: JSON.stringify(packet),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      // Handle successful response here
+      console.log("Order placed successfully!");
+      toast.success("Order placed!");
+    } catch (error) {
+      // Handle errors here
+      console.error("Error placing order:", error);
+    }
+
+    handleClearCart();
+    router.push("/");
+  };
+
+  const user_id = Cookies.get("user_id");
+  console.log("user_id", user_id);
+  console.log("cartProducts", cartProducts);
+
   return (
     <div>
       <h1 className="text-center font-bold text-3xl">Shopping Cart</h1>
@@ -36,7 +90,7 @@ export default function CartClient() {
       <div>
         {cartProducts &&
           cartProducts.map((item) => {
-            return <ItemContent key={item.id} item={item} />;
+            return <ItemContent key={item.food_id} item={item} />;
           })}
       </div>
       <div className="border-t-[1.5px] py-4 flex justify-between gap-4">
@@ -58,7 +112,7 @@ export default function CartClient() {
           <p className="text-slate-500">
             Convenience charges will be calculated at checkout
           </p>
-          <Button label="Checkout" onClick={() => {}} />
+          <Button label="Checkout" onClick={handleCheckout} />
           <Link href={"/"} className="flex items-center gap-1 mt-2">
             <MdArrowBack />
             <span>Continue Shopping</span>

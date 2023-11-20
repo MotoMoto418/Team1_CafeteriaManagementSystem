@@ -4,8 +4,14 @@ import Link from "next/link";
 import Container from "../Container";
 import logo from "/assets/logo_dish.png";
 import CartCount from "./CartCount";
+import UserMenu from "./UserMenu";
+import Cookies from "js-cookie";
 
 export default function Navbar() {
+  console.log(Cookies.get('f_name'))
+
+  // console.log(f_name)
+
   return (
     <div className="sticky top-0 w-full z-30 shadow-sm">
       <div className="py-4 border-b-[1px]">
@@ -17,7 +23,7 @@ export default function Navbar() {
             <div className="hidden md:block">Search</div>
             <div className="flex items-center gap-8 md:gap-12">
               <CartCount />
-              <div>UserMenu</div>
+              <UserMenu/>
             </div>
           </div>
         </Container>
