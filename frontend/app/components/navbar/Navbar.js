@@ -13,7 +13,7 @@ export default function Navbar() {
   // console.log(f_name)
 
   return (
-    <div className="sticky top-0 w-full z-30 shadow-sm">
+    <div className="sticky top-0 w-full z-30 shadow-sm bg-slate-100">
       <div className="py-4 border-b-[1px]">
         <Container>
           <div className="flex items-center justify-between gap-3 md-gap-0">
